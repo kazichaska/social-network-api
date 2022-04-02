@@ -42,7 +42,7 @@ const usersController = {
             })
     },
 
-    // add friend 
+    // add friend POST /api/users/:userId/friends/:friendId
     addFriend({ params, body }, res) {
         User.findOneAndUpdate({ _id: params.userId },
             { $push: { friends: { _id: params.friendId } } })
@@ -91,9 +91,14 @@ const usersController = {
             });
     },
 
-    // delete user by id
+    // DELETE user by id /api/users/:userId/friends/:friendId
     deleteUser({ params }, res) {
-        User.findOneAndDelete({ _id: params.id })
+        User.findOneAndDelete(
+            { _id: params.id },
+            { $pull: { friends: params.friendId } },
+            { new: true },
+            { runValidators: true }
+        )
             .then(dbUserData => {
                 if (!dbUserData) {
                     res.status(400).json({ message: 'No user found with this id!' });

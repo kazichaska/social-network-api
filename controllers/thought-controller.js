@@ -79,7 +79,27 @@ const thoughtController = {
             .catch(err => {
                 res.status(400).json(err);
             });
-    }
+    },
+
+    // create reaction /api/thoughts/:thoughtId/reactions
+    createReaction({ params, body }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $addToSet: { reactions: body } },
+            { new: true },
+            { runValidators: true }
+        )
+            .then(dbThoughtData => {
+                if (!dbThoughtData) {
+                    res.status(404).json({ message: 'No thought found with this id!' });
+                    return;
+                }
+                res.json(dbThoughtData);
+            })
+            .catch(err => {
+                res.status(400).json(err);
+            });
+    },
 };
 
 module.exports = thoughtController;
