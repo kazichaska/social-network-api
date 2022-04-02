@@ -3,12 +3,15 @@ const { Thought, User } = require('../models');
 const thoughtController = {
     // get all thoughts
     getAllThoughts: (req, res) => {
+        // console.log("this is the getAllThoughts function");
         Thought.find()
             .select('-__v')
             .then(dbThoughtData => {
+                // console.log("dbthoughtdata success", dbThoughtData);
                 res.json(dbThoughtData);
             })
             .catch(err => {
+                // console.log("dbthoughtdata error");
                 res.status(400).json(err);
             });
     },
@@ -82,17 +85,16 @@ const thoughtController = {
     },
 
     // create reaction /api/thoughts/:thoughtId/reactions
-    createReaction({ params, body }, res) {
+    createReaction: ({ params, body }, res) => {
         Thought.findOneAndUpdate(
             { _id: params.thoughtId },
             { $addToSet: { reactions: body } },
-            { new: true },
-            { runValidators: true }
+            { runValidators: true, new: true }
         )
             .then(dbThoughtData => {
+                // console.log(dbThoughtData, "this is test");
                 if (!dbThoughtData) {
-                    res.status(404).json({ message: 'No thought found with this id!' });
-                    return;
+                    return res.status(404).json({ message: 'No thought found with this id!' });
                 }
                 res.json(dbThoughtData);
             })
@@ -100,6 +102,29 @@ const thoughtController = {
                 res.status(400).json(err);
             });
     },
+
+    // delete reaction /api/thoughts/:thoughtId/reactions/:reactionId
+    deleteReaction: ({ params }, res) => {
+        console.log("this is the deleteReaction function");
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $pull: { reactions: { reactionId: params.reactionId } } },
+            { runValidators: true, new: true }
+        )
+            .then(dbThoughtData => {
+                console.log("dbthoughtdata success", dbThoughtData);
+                if (!dbThoughtData) {
+                    res.status(404).json({ message: 'No reaction id found!' });
+                    return;
+                }
+                res.json({ message: 'Successfully deleted the reaction!' })
+            })
+            .catch(err => {
+                console.log("dbthoughtdata error");
+                res.status(400).json(err);
+            });
+    }
 };
+
 
 module.exports = thoughtController;

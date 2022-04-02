@@ -15,23 +15,25 @@ const ThoughtSchema = new Schema(
             default: Date.now,
             get: (date) => dateFormat(date, 'dddd, mmmm dS, yyyy')
         },
-        username: [
-            {
-                type: String,
-                required: true
-            }
-        ],
-        reactions: [
-            reactionSchema
-        ]
+        username:
+        {
+            type: String,
+            required: true
+        },
+        reactions: [reactionSchema]
     },
     {
         toJSON: {
+            virtuals: true,
             getters: true
         },
         id: false
     }
 );
+
+ThoughtSchema.virtual('reactionCount').get(function () {
+    return this.reactions.length;
+});
 
 const Thought = model('Thought', ThoughtSchema);
 

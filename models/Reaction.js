@@ -1,8 +1,9 @@
-const { Schema, Types } = require('mongoose');
+const { Schema, nodel, Types } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
 const reactionSchema = new Schema({
     reactionId: {
-        type: Schema.Types.ObjectId,
+        type: Types.ObjectId,
         default: () => new Types.ObjectId()
     },
     reactionBody: {
@@ -23,7 +24,6 @@ const reactionSchema = new Schema({
 },
     {
         toJSON: {
-            virtuals: true,
             getters: true
         },
         id: false
@@ -31,8 +31,5 @@ const reactionSchema = new Schema({
 
 );
 
-reactionSchema.virtual('reactionCount').get(function () {
-    return this.reactions.length;
-});
 
 module.exports = reactionSchema;

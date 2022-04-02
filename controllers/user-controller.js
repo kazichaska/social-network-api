@@ -58,7 +58,7 @@ const usersController = {
             });
     },
 
-    // delete friend
+    // delete friend by id /api/users/:userId/friends/:friendId
     deleteFriend({ params, body }, res) {
         User.findOneAndDelete({ _id: params.userId },
             {
@@ -91,13 +91,10 @@ const usersController = {
             });
     },
 
-    // DELETE user by id /api/users/:userId/friends/:friendId
+    // DELETE a user 
     deleteUser({ params }, res) {
         User.findOneAndDelete(
-            { _id: params.id },
-            { $pull: { friends: params.friendId } },
-            { new: true },
-            { runValidators: true }
+            { _id: params.id }
         )
             .then(dbUserData => {
                 if (!dbUserData) {
