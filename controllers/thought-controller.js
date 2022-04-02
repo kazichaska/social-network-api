@@ -105,14 +105,14 @@ const thoughtController = {
 
     // delete reaction /api/thoughts/:thoughtId/reactions/:reactionId
     deleteReaction: ({ params }, res) => {
-        console.log("this is the deleteReaction function");
+        // console.log("this is the deleteReaction function");
         Thought.findOneAndUpdate(
             { _id: params.thoughtId },
             { $pull: { reactions: { reactionId: params.reactionId } } },
             { runValidators: true, new: true }
         )
             .then(dbThoughtData => {
-                console.log("dbthoughtdata success", dbThoughtData);
+                // console.log("dbthoughtdata success", dbThoughtData);
                 if (!dbThoughtData) {
                     res.status(404).json({ message: 'No reaction id found!' });
                     return;
@@ -120,7 +120,7 @@ const thoughtController = {
                 res.json({ message: 'Successfully deleted the reaction!' })
             })
             .catch(err => {
-                console.log("dbthoughtdata error");
+                // console.log("dbthoughtdata error");
                 res.status(400).json(err);
             });
     }
